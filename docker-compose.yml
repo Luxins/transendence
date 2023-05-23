@@ -1,0 +1,50 @@
+version: '2.1'
+
+services:
+
+  frontend:
+    container_name: frontend
+    image: frontend
+    build: ./frontend
+    depends_on:
+      - dev-db
+      - backend
+    ports:
+      - 3000:3000
+    restart: on-failure
+    networks:
+      - transcendence
+    env_file:
+      - ./frontend/.env
+
+  backend:
+    container_name: backend
+    image: backend
+    build: ./backend
+    depends_on:
+      - dev-db
+    ports:
+      - 6969:6969
+    restart: on-failure
+    networks:
+      - transcendence
+    env_file:
+      - ./backend/.env
+
+  dev-db:
+    container_name: dev-db
+    image: postgres:13
+    restart: on-failure
+    env_file:
+      - ./backend/.env
+    networks:
+      - transcendence
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+
+networks:
+  transcendence:
+    name: transcendence
+    driver: bridge
